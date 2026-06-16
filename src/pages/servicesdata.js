@@ -1,10 +1,10 @@
 export const servicesData = {
-  "sales": {
+"sales": {
     title: "Direct Sales Execution",
     badge: "Revenue Growth",
     desc: "Closing deals through data-driven pipeline execution. Our outbound specialists integrate directly into your operations to accelerate your pipeline velocity and increase final conversions.",
     longDesc: "We manage the heavy lifting of your transactional loops. From high-tier B2B target interactions to automated transactional touchpoints, our approach focuses on systematic quota attainment, relationship nurturing, and minimizing standard sales-cycle friction.",
-    image: "https://images.unsplash.com/photo-1552581234-2612b75d8953?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80",
     benefits: [
       { title: "Shorter Deal Cycles", desc: "Advanced objection-handling playbooks tailored explicitly around your product ecosystem." },
       { title: "Pipeline Transparency", desc: "Real-time updates via native CRM dashboards detailing accurate value metrics." },
