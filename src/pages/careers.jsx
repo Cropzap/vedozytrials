@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import JobDetails from './JobDetails.jsx';
+import JobDetails from './Jobdetails.jsx';
 
 const GOOGLE_FORM_URL = "https://forms.gle/9hR28XJpUnnScJCx9";
 

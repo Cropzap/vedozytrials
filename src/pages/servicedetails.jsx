@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { servicesData } from './servicesData';
+import { servicesData } from './servicesdata';
 
 const GET_STARTED_FORM = "https://forms.gle/89mT6Vs8CX99UkU48";
 
