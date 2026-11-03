@@ -1,360 +1,605 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import logoBrand from '../assets/logo.png';
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
+import logoBrand from "../assets/Vedozylogo.png"; // Replace with your logo path
 
-// External Google Form Anchors Matrix
-const FORMS = {
-  partnership: "https://forms.gle/Xc2Bj9ouVtPBXTmW9",
-  programRegistration: "https://forms.gle/brfLmM7eFX4AdcLF7",
-  careersRegistration: "https://forms.gle/Na4UnEEawLe7KtQP6",
-  getStarted: "https://forms.gle/89mT6Vs8CX99UkU48"
-};
+// 1. Loans Menu Data with Plain Single-Color SVG Icons
+const LOANS_MENU = [
+  {
+    label: "MSME Business Loan",
+    path: "/loans/msme-business-loan",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m-4 0V10h4v11M9 7h1m-1 4h1m4-4h1m-1 4h1" />
+      </svg>
+    ),
+  },
+  {
+    label: "Startup Loan",
+    path: "/loans/startup-loan",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Working Capital Loan",
+    path: "/loans/working-capital-loan",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Machinery Loan",
+    path: "/loans/machinery-loan",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Supply Chain Financing",
+    path: "/loans/supplychain-financing",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+  },
+];
+
+// 2. About Us Menu Data with Plain Single-Color SVG Icons
+const ABOUT_MENU = [
+  {
+    label: "About Us",
+    path: "/about/overview",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Our Approach",
+    path: "/about/our-approach",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Team",
+    path: "/about/team",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Investor Relations",
+    path: "/about/investor-relations",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+    ),
+  },
+  {
+    label: "CSR",
+    path: "/about/csr",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11a2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
+      </svg>
+    ),
+  },
+  {
+    label: "ESG",
+    path: "/about/esg",
+    svg: (
+      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+      </svg>
+    ),
+  },
+];
+
+const RESOURCE_TOOLS = [
+  { label: "Business Loan Eligibility Criteria", path: "/resources/eligibility-criteria" },
+  { label: "Business Loan EMI Calculator", path: "/resources/emi-calculator" },
+  { label: "Business Loan Interest Rate", path: "/resources/interest-rate" },
+  { label: "GST Calculator", path: "/resources/gst-calculator" },
+];
+
+const RESOURCE_SERVICES = [
+  { label: "Trading", path: "/services/trading" },
+  { label: "Manufacturing", path: "/services/manufacturing" },
+  { label: "Services", path: "/services/services-sector" },
+];
 
 export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Services');
-  const [mobileView, setMobileView] = useState('main');
-  
-  const navigate = useNavigate();
+  const [activeMenu, setActiveMenu] = useState(null); // 'loans' | 'about' | 'resources' | null
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSection, setMobileSection] = useState(null);
 
-  const menuData = {
-    Services: [
-      ["Sales", "Business Development", "Lead Generation", "Sales Strategy Development", "New Business Development", "Consultation"],
-      ["Demand Generation", "Growth Marketing", "Digital Marketing", "Branding & Promotion", "Go-to-Market Development"],
-      ["Business Process", "Human Capital", "Fractional Executive Services", "Cognitive Business Solutions", "Technology Consulting"]
-    ],
-    Industry: [
-      ["Consumer", "Energy, Resources & Industrials", "Financial Services", "Life Sciences & Health Care"],
-      ["Government & Public Services", "Technology, Media & Telecommunications", "Automotive", "Aerospace & Defense"],
-      ["Real Estate & Construction", "Transportation & Hospitality"]
-    ],
-    Alliances: [
-      ["Tactos Strategic Solutions", "FIRST Foundation", "Karun Foundation"],
-      ["Magic Bus Foundation", "Emerging Educational Institutions"]
-    ]
+  const navRef = useRef(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    closeAll();
+  }, [location]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        closeAll();
+      }
+    };
+    const handleEscape = (e) => {
+      if (e.key === "Escape") closeAll();
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  const closeAll = () => {
+    setActiveMenu(null);
+    setMobileOpen(false);
+    setMobileSection(null);
   };
 
-  const closeMobileDrawer = () => {
-    setMobileMenuOpen(false);
-    setTimeout(() => setMobileView('main'), 300);
+  const toggleMenu = (menuName) => {
+    setActiveMenu((prev) => (prev === menuName ? null : menuName));
   };
 
   return (
-    <header className="w-full bg-white text-victus-navy sticky top-0 z-50 border-b border-gray-100 backdrop-blur-md font-sans transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 md:h-24">
+    <div ref={navRef} className="w-full font-sans text-slate-800">
+      
+      {/* ================= TOPBAR ================= */}
+      <div className="bg-white text-slate-300 text-xs py-2.5 px-4 sm:px-6 lg:px-8 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          {/* Left Tagline */}
+          <div className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 inline-block"></span>
+            <span className="font-medium tracking-wide text-black text-xs sm:text-sm">
+              Making Capital Accessible for All
+            </span>
+          </div>
+
+          {/* Right Links */}
+          <div className="flex items-center gap-3 sm:gap-6">
+            <Link to="/careers" className="text-xs sm:text-sm text-black hover:text-blue-600 transition">
+              Careers
+            </Link>
+            <span className="text-slate-400">|</span>
+            <Link to="/support" className="text-xs sm:text-sm text-black hover:text-blue-600 transition">
+              Support
+            </Link>
+            <span className="text-slate-400">|</span>
+            <Link to="/login" className="text-xs sm:text-sm text-black hover:text-blue-600 transition flex items-center gap-1 font-semibold">
+              Login
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ================= MAIN NAVIGATION HEADER ================= */}
+      <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white shadow-sm font-sans text-slate-800">
+        <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           
-          {/* Logo Brand Panel - Substantially Increased Proportions */}
-          <Link to="/" className="flex items-center cursor-pointer flex-shrink-0 h-[64px] sm:h-[76px] md:h-[86px] lg:h-[92px] transition-all duration-300" onClick={() => setMegaMenuOpen(false)}>
-            <img 
-              src={logoBrand} 
-              alt="Hivictus Corporate Brand Logo" 
-              className="h-full w-auto object-contain object-left scale-100 hover:scale-[1.02] transition-transform duration-200"
+          {/* Brand Logo */}
+          <Link to="/" onClick={closeAll} className="flex items-center group py-1" aria-label="Vedozy Home">
+            <img
+              src={logoBrand}
+              alt="Vedozy LSP Logo"
+              className="h-5 w-auto object-contain transform scale-150 origin-left transition-transform duration-200 group-hover:scale-165"
             />
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden xl:flex items-center space-x-10 h-full text-[14px] font-bold text-gray-500 tracking-wide">
-            <Link to="/" className="h-full flex items-center hover:text-victus-navy transition-colors duration-200">
-              Home
-            </Link>
-            <Link to="/about" className="h-full flex items-center hover:text-victus-navy transition-colors duration-200">
-              About us
-            </Link>
-
-            {/* Core Mega Dropdown Trigger */}
-            <button 
-              onClick={() => setMegaMenuOpen(!megaMenuOpen)}
-              className={`h-full flex items-center gap-1.5 focus:outline-none hover:text-victus-navy transition-colors border-b-4 ${
-                megaMenuOpen ? 'border-b-text-victus-navy border-victus-navy text-victus-navy' : 'border-transparent'
+          {/* Desktop Navigation */}
+          <nav className="hidden items-center gap-2 lg:flex">
+            
+            {/* Loans Mega Menu Trigger */}
+            <button
+              onClick={() => toggleMenu("loans")}
+              aria-expanded={activeMenu === "loans"}
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-base font-medium transition ${
+                activeMenu === "loans" ? "text-blue-600 bg-blue-50/50" : "text-slate-700 hover:text-blue-600"
               }`}
             >
-              What we do
-              <svg className={`w-3 h-3 transform transition-transform duration-300 ${megaMenuOpen ? 'rotate-180 text-victus-navy' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+              Loans
+              <svg
+                className={`h-4 w-4 transition-transform duration-200 ${activeMenu === "loans" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            
-            <Link to="/blog" className="h-full flex items-center hover:text-victus-navy transition-colors duration-200">
-              Blog
+
+            {/* About Us Mega Menu Trigger */}
+            <button
+              onClick={() => toggleMenu("about")}
+              aria-expanded={activeMenu === "about"}
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-base font-medium transition ${
+                activeMenu === "about" ? "text-blue-600 bg-blue-50/50" : "text-slate-700 hover:text-blue-600"
+              }`}
+            >
+              About Us
+              <svg
+                className={`h-4 w-4 transition-transform duration-200 ${activeMenu === "about" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Resources Mega Menu Trigger */}
+            <button
+              onClick={() => toggleMenu("resources")}
+              aria-expanded={activeMenu === "resources"}
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-base font-medium transition ${
+                activeMenu === "resources" ? "text-blue-600 bg-blue-50/50" : "text-slate-700 hover:text-blue-600"
+              }`}
+            >
+              Resources
+              <svg
+                className={`h-4 w-4 transition-transform duration-200 ${activeMenu === "resources" ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Partner With Us Direct Link */}
+            <Link
+              to="/partnerwithus"
+              onClick={closeAll}
+              className="rounded-xl px-4 py-2.5 text-base font-medium text-slate-700 transition hover:text-blue-600"
+            >
+              Partner With Us
             </Link>
-            <Link to="/careers" className="h-full flex items-center hover:text-victus-navy transition-colors duration-200">
-              Careers
-            </Link>
-            <Link to="/contact" className="h-full flex items-center hover:text-victus-navy transition-colors duration-200">
+
+            {/* Contact Direct Link */}
+            <Link
+              to="/contact"
+              onClick={closeAll}
+              className="rounded-xl px-4 py-2.5 text-base font-medium text-slate-700 transition hover:text-blue-600"
+            >
               Contact
             </Link>
-          </div>
+          </nav>
 
-          {/* Right Action Button */}
-          <div className="hidden xl:flex items-center">
-            <a 
-              href={FORMS.getStarted}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setMegaMenuOpen(false)}
-              className="relative px-6 py-3.5 text-xs font-bold uppercase tracking-widest text-white bg-victus-navy rounded-xl transition-all duration-300 hover:bg-victus-navy/90 hover:shadow-lg hover:shadow-victus-navy/10 active:scale-95 no-underline block"
+          {/* Right CTA */}
+          <div className="flex items-center gap-4">
+            <Link
+              to="/signup"
+              onClick={closeAll}
+              className="inline-flex items-center justify-center bg-white text-black font-semibold text-sm uppercase tracking-wider px-6 py-3 rounded-none border border-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors duration-150"
             >
-              Get started
-            </a>
-          </div>
+              Apply Now
+            </Link>
 
-          {/* Mobile Menu Toggle Trigger */}
-          <div className="flex xl:hidden items-center">
-            <button 
-              onClick={() => mobileMenuOpen ? closeMobileDrawer() : setMobileMenuOpen(true)} 
-              className="text-victus-navy hover:text-victus-green focus:outline-none p-2 transition-colors z-[70]" 
-              aria-label="Toggle navigation menu"
+            {/* Mobile Menu Trigger */}
+            <button
+              onClick={() => setMobileOpen((v) => !v)}
+              aria-label="Toggle Menu"
+              className="rounded-xl p-2 text-slate-700 transition hover:bg-slate-100 lg:hidden"
             >
-              <svg className="w-7 h-7 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M6 18L18 6" />
+              <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
             </button>
           </div>
-
         </div>
-      </div>
 
-      {/* DESKTOP MEGA DROPDOWN MENU */}
-      {megaMenuOpen && (
-        <div 
-          className="absolute left-0 w-full bg-white text-victus-navy hidden xl:block z-40 border-b border-gray-100 shadow-xl shadow-gray-200/40"
-          onMouseLeave={() => setMegaMenuOpen(false)}
-        >
-          <div className="w-full flex min-h-[440px]">
-            
-            {/* Left Tab Sub-panels */}
-            <div className="w-1/5 bg-gray-50/60 py-8 flex flex-col font-sans border-r border-gray-100">
-              {['Services', 'Industry', 'Alliances'].map((tab) => (
-                <div 
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`w-full px-8 py-4 flex items-center justify-between text-base font-bold cursor-pointer transition-all duration-200 ${
-                    activeTab === tab ? 'bg-white text-victus-navy border-l-4 border-victus-navy' : 'text-gray-400 hover:text-victus-navy hover:bg-gray-50 border-l-4 border-transparent'
-                  }`}
+        {/* ================= MEGA MENU 1: LOANS ================= */}
+        {activeMenu === "loans" && (
+          <div className="hidden lg:block absolute left-0 top-full w-full border-b border-slate-200 bg-white shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="max-w-7xl mx-auto px-8 py-8">
+              <div className="flex items-center justify-between pb-6 border-b border-slate-200 mb-8">
+                <div className="flex items-center gap-3">
+                  <span className="shrink-0">
+                    <svg className="h-7 w-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </span>
+                  <span className="text-xl font-bold text-slate-900">Loans Overview</span>
+                </div>
+                <Link
+                  to="/loans"
+                  onClick={closeAll}
+                  className="inline-flex items-center gap-2 bg-blue-600 text-white font-semibold text-sm uppercase tracking-wider px-6 py-3 rounded-none border border-blue-600 hover:bg-blue-700 hover:border-blue-700 transition-colors duration-150 group"
                 >
-                  <span>{tab}</span>
-                  <svg className={`w-4 h-4 transition-transform duration-200 ${activeTab === tab ? 'text-victus-navy translate-x-1' : 'text-gray-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  All Loans
+                  <svg
+                    className="h-4 w-4 text-current transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 17L17 7M17 7H7M17 7v10" />
                   </svg>
-                </div>
-              ))}
-            </div>
-
-            {/* Right Tab Active Columns View Matrix */}
-            <div className="w-4/5 flex flex-col bg-white">
-              <div className="px-16 py-12 flex-grow">
-                <div className="grid grid-cols-3 gap-x-12 gap-y-2 w-full">
-                  {menuData[activeTab]?.map((column, columnIndex) => (
-                    <div key={columnIndex} className="flex flex-col space-y-4">
-                      {column.map((linkText, linkIndex) => (
-                        <Link 
-                          key={linkIndex} 
-                          to={`/${activeTab.toLowerCase()}/${linkText.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-                          onClick={() => setMegaMenuOpen(false)}
-                          className="text-gray-500 hover:text-victus-navy hover:underline decoration-victus-green decoration-2 underline-offset-4 text-[15px] font-medium leading-snug transition-all"
-                        >
-                          {linkText}
-                        </Link>
-                      ))}
-                    </div>
-                  ))}
-                </div>
+                </Link>
               </div>
 
-              {/* Dynamic Bottom Row Footer Panel */}
-              {activeTab === 'Alliances' && (
-                <div className="mt-auto px-16 py-6 border-t border-gray-50 flex justify-between items-center bg-gray-50/20">
-                  <span className="text-xs font-bold tracking-wider text-gray-400 uppercase max-w-xl text-left">
-                    Interested in alliances? <span className="text-victus-navy ml-1">Let's coordinate paths.</span>
-                  </span>
-                  <a 
-                    href={FORMS.partnership}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMegaMenuOpen(false)}
-                    className="border border-victus-navy text-victus-navy hover:bg-victus-navy hover:text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all duration-300 no-underline block text-center shadow-xs"
+              <div className="grid grid-cols-3 gap-8 pb-4">
+                {LOANS_MENU.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={closeAll}
+                    className="group flex items-center gap-4 p-3 rounded-xl transition hover:bg-slate-50"
                   >
-                    Partner with us
-                  </a>
-                </div>
-              )}
+                    <div className="shrink-0">{item.svg}</div>
+                    <span className="text-base font-semibold text-slate-800 group-hover:text-blue-600 transition">
+                      {item.label}
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
-
           </div>
-        </div>
-      )}
+        )}
 
-      {/* FULL SCREEN IMMERSIVE MOBILE VIEW OVERLAY CONTAINER */}
-      <div className={`fixed inset-0 w-screen h-screen z-[9999] xl:hidden ${mobileMenuOpen ? 'visible' : 'invisible pointer-events-none'}`}>
-        
-        {/* Backdrop Curtain Layer */}
-        <div 
-          className={`absolute inset-0 bg-white transition-opacity duration-300 ease-in-out ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`} 
-          onClick={closeMobileDrawer} 
-        />
-        
-        {/* Full-Screen Menu Content Sheet */}
-        <div 
-          className={`absolute inset-0 w-full h-full bg-white flex flex-col transition-all duration-400 ease-in-out transform ${
-            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          } overflow-hidden`}
-        >
-          
-          {/* Header Action Navigation Row */}
-          <div className="flex items-center justify-between h-20 md:h-24 px-6 sm:px-8 border-b border-gray-100 bg-white shrink-0 z-10">
-            <span className="font-bold text-xs uppercase tracking-[0.25em] text-gray-400">
-              {mobileView === 'main' ? 'Menu Directory' : mobileView}
-            </span>
-            {mobileView !== 'main' ? (
-              <button 
-                onClick={() => setMobileView(mobileView === 'services' || mobileView === 'industry' || mobileView === 'alliances' ? 'what we do' : 'main')} 
-                className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-white bg-victus-navy px-3 py-2 rounded-none active:scale-95 transition-transform duration-200 shadow-sm"
-              >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                Back
-              </button>
-            ) : (
-              <button 
-                onClick={closeMobileDrawer}
-                className="text-gray-400 hover:text-victus-navy text-xs font-semibold uppercase tracking-wider flex items-center gap-1 py-1.5 px-3 bg-gray-100/70 rounded-none"
-              >
-                Close ✕
-              </button>
-            )}
-          </div>
-
-          {/* Sliding Track Viewport Matrix */}
-          <div className="flex-grow relative overflow-hidden bg-white">
-            
-            {/* VIEW 1: MAIN NAVIGATION LEVEL */}
-            <div 
-              className={`absolute inset-0 px-6 sm:px-8 py-6 flex flex-col space-y-6 bg-white overflow-y-auto transition-transform duration-300 ease-in-out ${
-                mobileView === 'main' ? 'translate-x-0' : '-translate-x-full'
-              }`}
-            >
-              <Link to="/" onClick={closeMobileDrawer} className="flex items-center justify-between bg-gray-50/50 border border-gray-100 p-5 rounded-none text-victus-navy font-bold tracking-wide text-[16px] transition-all active:scale-[0.99]">
-                <span>Home Portal</span>
-                <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-              </Link>
-
-              <Link to="/about" onClick={closeMobileDrawer} className="flex items-center justify-between bg-gray-50/50 border border-gray-100 p-5 rounded-none text-victus-navy font-bold tracking-wide text-[16px] transition-all active:scale-[0.99]">
-                <span>About Corporate</span>
-                <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-              </Link>
-
-              <button onClick={() => setMobileView('what we do')} className="w-full flex items-center justify-between bg-gradient-to-r from-gray-50 to-white border border-gray-100 p-5 rounded-none text-victus-navy text-left transition-all active:scale-[0.99] shadow-sm">
-                <div>
-                  <span className="text-[17px] font-bold block text-victus-navy tracking-tight">What We Do</span>
-                  <span className="text-[12px] text-gray-400 block font-medium mt-0.5">Explore capability indexes</span>
+        {/* ================= MEGA MENU 2: ABOUT US ================= */}
+        {activeMenu === "about" && (
+          <div className="hidden lg:block absolute left-0 top-full w-full border-b border-slate-200 bg-white shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="max-w-7xl mx-auto px-8 py-10">
+              <div className="grid grid-cols-12 gap-8 items-center">
+                
+                {/* Single-Color Icons Grid */}
+                <div className="col-span-8 grid grid-cols-2 gap-y-6 gap-x-12">
+                  {ABOUT_MENU.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={closeAll}
+                      className="group flex items-center gap-4 p-3 rounded-xl transition hover:bg-slate-50"
+                    >
+                      <div className="shrink-0">{item.svg}</div>
+                      <span className="text-base font-semibold text-slate-800 group-hover:text-blue-600 transition">
+                        {item.label}
+                      </span>
+                    </Link>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-victus-green px-2 py-0.5 rounded-none">View</span>
-                  <svg className="w-5 h-5 text-victus-navy" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                </div>
-              </button>
 
-              <Link to="/blog" onClick={closeMobileDrawer} className="flex items-center justify-between bg-gray-50/50 border border-gray-100 p-5 rounded-none text-victus-navy font-bold tracking-wide text-[16px] transition-all active:scale-[0.99]">
-                <span>Knowledge Base</span>
-                <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-              </Link>
-
-              <Link to="/careers" onClick={closeMobileDrawer} className="flex items-center justify-between bg-gray-50/50 border border-gray-100 p-5 rounded-none text-victus-navy font-bold tracking-wide text-[16px] transition-all active:scale-[0.99]">
-                <span>Careers Desk</span>
-                <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-              </Link>
-
-              <Link to="/contact" onClick={closeMobileDrawer} className="flex items-center justify-between bg-gray-50/50 border border-gray-100 p-5 rounded-none text-victus-navy font-bold tracking-wide text-[16px] transition-all active:scale-[0.99]">
-                <span>Contact Hub</span>
-                <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-              </Link>
-            </div>
-
-            {/* VIEW 2: WHAT WE DO SELECTION LAYER */}
-            <div 
-              className={`absolute inset-0 px-6 sm:px-8 py-6 flex flex-col space-y-4 bg-white overflow-y-auto transition-transform duration-300 ease-in-out ${
-                mobileView === 'what we do' ? 'translate-x-0' : mobileView === 'main' ? 'translate-x-full' : '-translate-x-full'
-              }`}
-            >
-              {['services', 'industry', 'alliances'].map((type) => (
-                <button 
-                  key={type} 
-                  onClick={() => setMobileView(type)} 
-                  className="w-full flex items-center justify-between bg-gray-50/50 border border-gray-100 p-5 rounded-none text-victus-navy font-bold capitalize transition-all active:scale-[0.98]"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-6 bg-victus-green" />
-                    <span className="text-[16px] tracking-wide font-bold">{type}</span>
+                {/* Right Callout Card */}
+                <div className="col-span-4 bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-xl p-6 flex flex-col justify-between relative overflow-hidden">
+                  <div className="relative z-10 space-y-2">
+                    <h4 className="text-xl font-bold leading-tight">Best Place to Work in India</h4>
+                    <p className="text-base text-slate-300 leading-relaxed">
+                      Best Mid-Sized Internet Company
+                    </p>
                   </div>
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                </button>
-              ))}
-            </div>
-
-            {/* VIEW 3: SUB-CATEGORY DIRECTORY DEEP LINK PANEL */}
-            <div 
-              className={`absolute inset-0 px-6 sm:px-8 py-6 flex flex-col space-y-6 bg-white overflow-y-auto transition-transform duration-300 ease-in-out ${
-                ['services', 'industry', 'alliances'].includes(mobileView) ? 'translate-x-0' : 'translate-x-full'
-              }`}
-            >
-              {['services', 'industry', 'alliances'].includes(mobileView) && (
-                <>
-                  <div className="bg-white border border-gray-100 rounded-none flex flex-col divide-y divide-gray-50 overflow-hidden shadow-sm">
-                    {menuData[mobileView.charAt(0).toUpperCase() + mobileView.slice(1)]?.flat().map((link, idx) => (
-                      <Link 
-                        key={idx} 
-                        to={`/${mobileView}/${link.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-                        onClick={closeMobileDrawer} 
-                        className="text-gray-500 hover:text-victus-navy hover:bg-gray-50/50 text-[15px] font-semibold py-4 px-5 flex justify-between items-center transition-colors duration-150"
+                  <div className="pt-6 relative z-10">
+                    <Link
+                      to="/careers"
+                      onClick={closeAll}
+                      className="inline-flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-none text-sm tracking-wider transition shadow-md group"
+                    >
+                      <span>Careers</span>
+                      <svg
+                        className="h-4 w-4 text-current transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <span className="max-w-[85%] text-left leading-normal">{link}</span>
-                        <svg className="w-4 h-4 text-gray-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 17L17 7M17 7H7M17 7v10" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= MEGA MENU 3: RESOURCES ================= */}
+        {activeMenu === "resources" && (
+          <div className="hidden lg:block absolute left-0 top-full w-full border-b border-slate-200 bg-white shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="max-w-7xl mx-auto px-8 py-10">
+              <div className="grid grid-cols-12 gap-8 items-center">
+                
+                {/* Calculators & Tools Column */}
+                <div className="col-span-4 space-y-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 pb-2 border-b border-slate-100">
+                    Calculators & Tools
+                  </h4>
+                  <div className="space-y-1">
+                    {RESOURCE_TOOLS.map((tool) => (
+                      <Link
+                        key={tool.path}
+                        to={tool.path}
+                        onClick={closeAll}
+                        className="block rounded-xl px-4 py-3 text-base font-semibold text-slate-800 transition hover:bg-blue-50/70 hover:text-blue-600"
+                      >
+                        {tool.label}
                       </Link>
                     ))}
                   </div>
+                </div>
 
-                  {mobileView === 'alliances' && (
-                    <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-none border border-gray-100 flex flex-col items-center text-center space-y-4 shadow-xs">
-                      <p className="text-xs font-bold tracking-wider text-gray-400 uppercase leading-normal">
-                        Interested in alliances? <br/> <span className="text-victus-navy">Let's coordinate paths.</span>
-                      </p>
-                      <a 
-                        href={FORMS.partnership}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={closeMobileDrawer}
-                        className="w-full bg-white border border-gray-200 text-victus-navy text-xs font-bold uppercase tracking-widest py-4 rounded-none transition-all duration-200 text-center no-underline block shadow-xs active:scale-[0.98]"
+                {/* Sectors We Serve Column */}
+                <div className="col-span-4 space-y-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 pb-2 border-b border-slate-100">
+                    Sectors We Serve
+                  </h4>
+                  <div className="space-y-1">
+                    {RESOURCE_SERVICES.map((service) => (
+                      <Link
+                        key={service.path}
+                        to={service.path}
+                        onClick={closeAll}
+                        className="block rounded-xl px-4 py-3 text-base font-semibold text-slate-800 transition hover:bg-blue-50/70 hover:text-blue-600"
                       >
-                        Partner with us
-                      </a>
+                        {service.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Calculator Visual Card */}
+                <div className="col-span-4 bg-blue-50 rounded-3xl p-6 border border-blue-100 flex flex-col justify-between">
+                  <div>
+                    <div className="mb-2">
+                      <svg className="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
                     </div>
-                  )}
-                </>
+                    <h4 className="text-lg font-bold text-slate-900 mb-1">Calculate Your Loan EMI</h4>
+                    <p className="text-base text-slate-600 leading-relaxed mb-4">
+                      Estimate monthly repayments and evaluate interest rates before submitting your loan application.
+                    </p>
+                  </div>
+                  <Link
+                    to="/resources/emi-calculator"
+                    onClick={closeAll}
+                    className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider transition shadow-sm"
+                  >
+                    Open EMI Calculator
+                  </Link>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= MOBILE NAVIGATION DRAWER ================= */}
+        {mobileOpen && (
+          <div className="border-t border-slate-200 bg-white px-4 py-6 lg:hidden max-h-[82vh] overflow-y-auto space-y-3 shadow-xl">
+            
+            {/* Mobile Loans Accordion */}
+            <div className="border border-slate-100 rounded-xl p-2 bg-slate-50/50">
+              <button
+                onClick={() => setMobileSection((v) => (v === "loans" ? null : "loans"))}
+                className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-bold text-slate-800"
+              >
+                <span>Loans</span>
+                <svg className={`h-4 w-4 transition-transform ${mobileSection === "loans" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobileSection === "loans" && (
+                <div className="mt-2 space-y-1 pl-2 border-l-2 border-blue-200">
+                  {LOANS_MENU.map((item) => (
+                    <Link key={item.path} to={item.path} onClick={closeAll} className="block rounded-lg px-3 py-2 text-sm text-slate-600 font-medium">
+                      {item.label}
+                    </Link>
+                  ))}
+                  <Link to="/loans" onClick={closeAll} className="block rounded-lg px-3 py-2 text-sm font-bold text-blue-600">
+                    All Loans ↗
+                  </Link>
+                </div>
               )}
             </div>
 
-          </div>
+            {/* Mobile About Us Accordion */}
+            <div className="border border-slate-100 rounded-xl p-2 bg-slate-50/50">
+              <button
+                onClick={() => setMobileSection((v) => (v === "about" ? null : "about"))}
+                className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-bold text-slate-800"
+              >
+                <span>About Us</span>
+                <svg className={`h-4 w-4 transition-transform ${mobileSection === "about" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobileSection === "about" && (
+                <div className="mt-2 space-y-1 pl-2 border-l-2 border-blue-200">
+                  {ABOUT_MENU.map((item) => (
+                    <Link key={item.path} to={item.path} onClick={closeAll} className="block rounded-lg px-3 py-2 text-sm text-slate-600 font-medium">
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
-          {/* Sticky Full-Width Footer Action Row */}
-          <div className="p-6 sm:p-8 border-t border-gray-100 bg-white shrink-0 z-10">
-            <a 
-              href={FORMS.getStarted}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={closeMobileDrawer}
-              className="w-full bg-victus-navy text-white text-center text-xs font-bold uppercase tracking-widest py-3.5 rounded-none shadow-lg shadow-victus-navy/10 active:scale-95 transition-all duration-150 block no-underline"
-            >
-              Get started today
-            </a>
-          </div>
+            {/* Mobile Resources Accordion */}
+            <div className="border border-slate-100 rounded-xl p-2 bg-slate-50/50">
+              <button
+                onClick={() => setMobileSection((v) => (v === "resources" ? null : "resources"))}
+                className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-bold text-slate-800"
+              >
+                <span>Resources</span>
+                <svg className={`h-4 w-4 transition-transform ${mobileSection === "resources" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {mobileSection === "resources" && (
+                <div className="mt-2 space-y-1 pl-2 border-l-2 border-blue-200">
+                  <span className="block px-3 pt-2 text-xs font-bold uppercase tracking-wider text-blue-600">Calculators & Tools</span>
+                  {RESOURCE_TOOLS.map((item) => (
+                    <Link key={item.path} to={item.path} onClick={closeAll} className="block rounded-lg px-3 py-1.5 text-sm text-slate-600 font-medium">
+                      {item.label}
+                    </Link>
+                  ))}
+                  <span className="block px-3 pt-3 text-xs font-bold uppercase tracking-wider text-blue-600">Sectors We Serve</span>
+                  {RESOURCE_SERVICES.map((item) => (
+                    <Link key={item.path} to={item.path} onClick={closeAll} className="block rounded-lg px-3 py-1.5 text-sm text-slate-600 font-medium">
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
-        </div>
-      </div>
-    </header>
+            {/* Mobile Standalone Links */}
+            <div className="space-y-1 pt-2">
+              <Link to="/partnerwithus" onClick={closeAll} className="block rounded-xl px-4 py-2.5 text-base font-semibold text-slate-800 hover:bg-slate-50">
+                Partner With Us
+              </Link>
+              <Link to="/contact" onClick={closeAll} className="block rounded-xl px-4 py-2.5 text-base font-semibold text-slate-800 hover:bg-slate-50">
+                Contact
+              </Link>
+              <Link to="/careers" onClick={closeAll} className="block rounded-xl px-4 py-2.5 text-base font-semibold text-slate-800 hover:bg-slate-50">
+                Careers
+              </Link>
+              <Link to="/support" onClick={closeAll} className="block rounded-xl px-4 py-2.5 text-base font-semibold text-slate-800 hover:bg-slate-50">
+                Support
+              </Link>
+              <Link to="/login" onClick={closeAll} className="block rounded-xl px-4 py-2.5 text-base font-semibold text-slate-800 hover:bg-slate-50">
+                Login
+              </Link>
+            </div>
+
+            {/* Mobile CTA */}
+            <div className="pt-4">
+              <Link
+                to="/signup"
+                onClick={closeAll}
+                className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-none text-sm uppercase tracking-wider transition"
+              >
+                Apply Now
+              </Link>
+            </div>
+          </div>
+        )}
+      </header>
+    </div>
   );
 }

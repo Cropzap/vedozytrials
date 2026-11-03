@@ -1,3 +1,5 @@
+// src/App.jsx
+
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
@@ -7,11 +9,16 @@ import Footer from './components/Footer';
 
 // 2. Page Asset Paths
 import Home from './home'; 
+import Loans from './loans'; // Newly integrated Loans page
 import AboutUs from './pages/aboutus';
 import ServiceDetails from './pages/servicedetails';
 import ContactUs from './pages/contactus';
 import Careers from './pages/careers';
 import Blogs from './pages/blogs'; // Newly integrated insights directory hub
+import Login from './pages/Login'; // Integrated Login Page
+import Signup from './pages/Signup'; // Integrated Registration Page
+import PartnerWithUs from './pages/PartnerWithUs'; // Import your new page
+import WhatWeAreBuilding from './pages/story/what-we-are-building'; // Integrated Story Page
 
 // Reusable Ultra-Attractive Coming Soon Component
 function ComingSoonPage({ categoryName }) {
@@ -78,8 +85,15 @@ function App() {
       <main className="min-h-screen bg-[#f8f9ff]">
         <Routes>
           <Route path="/" element={<Home />} />
+          
+          {/* Core Loan Directory Route */}
+          <Route path="/loans" element={<Loans />} />
+
           <Route path="/about" element={<AboutUs />} />
           <Route path="/services/:serviceSlug" element={<ServiceDetails />} />
+          
+          {/* Enhanced Story Route */}
+          <Route path="/story/what-we-are-building" element={<WhatWeAreBuilding />} />
           
           {/* Enhanced Attractive Coming Soon Route Targets */}
           <Route path="/industry/:industrySlug" element={<ComingSoonPage categoryName="Industry Profile" />} />
@@ -88,6 +102,16 @@ function App() {
           <Route path="/blog" element={<Blogs />} /> {/* Handles grid listings and active parameter reading views */}
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/careers" element={<Careers />} />
+          
+          {/* Authentication & Onboarding Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Signup />} />
+          
+          {/* Partner with us route variations to prevent 404s */}
+          <Route path="/partnerwithus" element={<PartnerWithUs />} />
+          <Route path="/partner-with-us" element={<PartnerWithUs />} />
+
+          <Route path="/signup" element={<Signup />} /> {/* Alias route for registration */}
         </Routes>
       </main>
       <Footer />
