@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logoBrand from "../assets/Vedozylogo.png"; // Replace with your logo path
+import logoBrand from "../assets/vedozylogo.png"; // Replace with your logo path
 
 // 1. Loans Menu Data with Plain Single-Color SVG Icons
 const LOANS_MENU = [
