@@ -308,7 +308,7 @@ export default function Home() {
           </div>
           <div>
             <button
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/partnerwithus")}
               className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 py-4 rounded-full inline-flex items-center gap-2 transition-all cursor-pointer shrink-0 shadow-md"
             >
               Partner With Us <ArrowRight size={18} />

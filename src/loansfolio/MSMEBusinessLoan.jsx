@@ -67,7 +67,7 @@ export default function MSMEBusinessLoan() {
 
           <div className="shrink-0">
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/register")}
               className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-blue-600/30 flex items-center gap-2 transition-all cursor-pointer text-sm"
             >
               <span>Apply for Loan</span>
@@ -359,7 +359,7 @@ export default function MSMEBusinessLoan() {
 
           <div className="pt-2">
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/register")}
               className="bg-white hover:bg-slate-100 text-blue-900 font-extrabold px-10 py-4 rounded-xl shadow-xl transition-all cursor-pointer inline-flex items-center gap-2 text-base"
             >
               <span>Get Started Now</span>
