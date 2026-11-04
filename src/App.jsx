@@ -9,16 +9,26 @@ import Footer from './components/Footer';
 
 // 2. Page Asset Paths
 import Home from './home'; 
-import Loans from './loans'; // Newly integrated Loans page
+import Loans from './loans'; // Core Loans Directory Hub
+
+// 3. Integrated Loansfolio Modules
+import MSMEBusinessLoan from './loansfolio/MSMEBusinessLoan'; 
+import StartupLoan from './loansfolio/StartupLoan'; 
+import WorkingCapitalLoan from './loansfolio/workingcapitalloan'; 
+import MachineryLoan from './loansfolio/MachineryLoan'; 
+import SupplychainFinancing from './loansfolio/SupplychainFinancing'; 
+
+// 4. Auxiliary Pages
 import AboutUs from './pages/aboutus';
 import ServiceDetails from './pages/servicedetails';
 import ContactUs from './pages/contactus';
 import Careers from './pages/careers';
-import Blogs from './pages/blogs'; // Newly integrated insights directory hub
-import Login from './pages/Login'; // Integrated Login Page
-import Signup from './pages/Signup'; // Integrated Registration Page
-import PartnerWithUs from './pages/PartnerWithUs'; // Import your new page
-import WhatWeAreBuilding from './pages/story/what-we-are-building'; // Integrated Story Page
+import Blogs from './pages/blogs'; 
+import Login from './pages/Login'; 
+import Signup from './pages/Signup'; 
+import PartnerWithUs from './pages/PartnerWithUs'; 
+import WhatWeAreBuilding from './pages/story/what-we-are-building'; 
+
 
 // Reusable Ultra-Attractive Coming Soon Component
 function ComingSoonPage({ categoryName }) {
@@ -86,8 +96,13 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           
-          {/* Core Loan Directory Route */}
+          {/* Core Loan Directory Hub & Specialized Product Routes */}
           <Route path="/loans" element={<Loans />} />
+          <Route path="/loans/msme-business-loan" element={<MSMEBusinessLoan />} />
+          <Route path="/loans/startup-loan" element={<StartupLoan />} />
+          <Route path="/loans/working-capital-loan" element={<WorkingCapitalLoan />} />
+          <Route path="/loans/machinery-loan" element={<MachineryLoan />} />
+          <Route path="/loans/supplychain-financing" element={<SupplychainFinancing />} />
 
           <Route path="/about" element={<AboutUs />} />
           <Route path="/services/:serviceSlug" element={<ServiceDetails />} />
@@ -99,7 +114,7 @@ function App() {
           <Route path="/industry/:industrySlug" element={<ComingSoonPage categoryName="Industry Profile" />} />
           <Route path="/alliances/:allianceSlug" element={<ComingSoonPage categoryName="Alliance Portal" />} />
           
-          <Route path="/blog" element={<Blogs />} /> {/* Handles grid listings and active parameter reading views */}
+          <Route path="/blog" element={<Blogs />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/careers" element={<Careers />} />
           
