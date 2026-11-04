@@ -52,64 +52,7 @@ const LOANS_MENU = [
   },
 ];
 
-// 2. About Us Menu Data with Plain Single-Color SVG Icons
-const ABOUT_MENU = [
-  {
-    label: "About Us",
-    path: "/about/overview",
-    svg: (
-      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Our Approach",
-    path: "/about/our-approach",
-    svg: (
-      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Team",
-    path: "/about/team",
-    svg: (
-      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Investor Relations",
-    path: "/about/investor-relations",
-    svg: (
-      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-      </svg>
-    ),
-  },
-  {
-    label: "CSR",
-    path: "/about/csr",
-    svg: (
-      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.5a2.5 2.5 0 002.5-2.5V11a2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
-      </svg>
-    ),
-  },
-  {
-    label: "ESG",
-    path: "/about/esg",
-    svg: (
-      <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-      </svg>
-    ),
-  },
-];
-
+/* ================= TEMPORARILY COMMENTED OUT: RESOURCE DATA =================
 const RESOURCE_TOOLS = [
   { label: "Business Loan Eligibility Criteria", path: "/resources/eligibility-criteria" },
   { label: "Business Loan EMI Calculator", path: "/resources/emi-calculator" },
@@ -122,9 +65,10 @@ const RESOURCE_SERVICES = [
   { label: "Manufacturing", path: "/services/manufacturing" },
   { label: "Services", path: "/services/services-sector" },
 ];
+=========================================================================== */
 
 export default function Navbar() {
-  const [activeMenu, setActiveMenu] = useState(null); // 'loans' | 'about' | 'resources' | null
+  const [activeMenu, setActiveMenu] = useState(null); // 'loans' | null
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState(null);
 
@@ -169,28 +113,12 @@ export default function Navbar() {
       {/* ================= TOPBAR ================= */}
       <div className="bg-white text-slate-300 text-xs py-2.5 px-4 sm:px-6 lg:px-8 border-b border-slate-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          {/* Left Tagline */}
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-600 inline-block"></span>
             <span className="font-medium tracking-wide text-black text-xs sm:text-sm">
               Making Capital Accessible for All
             </span>
           </div>
-
-          {/* Right Links *
-          <div className="flex items-center gap-3 sm:gap-6">
-            <Link to="/careers" className="text-xs sm:text-sm text-black hover:text-blue-600 transition">
-              Careers
-            </Link>
-            <span className="text-slate-400">|</span>
-            <Link to="/support" className="text-xs sm:text-sm text-black hover:text-blue-600 transition">
-              Support
-            </Link>
-            <span className="text-slate-400">|</span>
-            <Link to="/login" className="text-xs sm:text-sm text-black hover:text-blue-600 transition flex items-center gap-1 font-semibold">
-              Login
-            </Link>
-          </div> ====== */}
         </div>
       </div>
 
@@ -229,26 +157,16 @@ export default function Navbar() {
               </svg>
             </button>
 
-            {/* About Us Mega Menu Trigger */}
-            <button
-              onClick={() => toggleMenu("about")}
-              aria-expanded={activeMenu === "about"}
-              className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-base font-medium transition ${
-                activeMenu === "about" ? "text-blue-600 bg-blue-50/50" : "text-slate-700 hover:text-blue-600"
-              }`}
+            {/* About Us Direct Link */}
+            <Link
+              to="/about/overview"
+              onClick={closeAll}
+              className="rounded-xl px-4 py-2.5 text-base font-medium text-slate-700 transition hover:text-blue-600"
             >
               About Us
-              <svg
-                className={`h-4 w-4 transition-transform duration-200 ${activeMenu === "about" ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+            </Link>
 
-            {/* Resources Mega Menu Trigger */}
+            {/* ================= RESOURCES MEGA MENU TRIGGER (TEMPORARILY COMMENTED OUT) =================
             <button
               onClick={() => toggleMenu("resources")}
               aria-expanded={activeMenu === "resources"}
@@ -266,6 +184,7 @@ export default function Navbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
+            ============================================================================================= */}
 
             {/* Partner With Us Direct Link */}
             <Link
@@ -362,68 +281,12 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* ================= MEGA MENU 2: ABOUT US ================= */}
-        {activeMenu === "about" && (
-          <div className="hidden lg:block absolute left-0 top-full w-full border-b border-slate-200 bg-white shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
-            <div className="max-w-7xl mx-auto px-8 py-10">
-              <div className="grid grid-cols-12 gap-8 items-center">
-                
-                {/* Single-Color Icons Grid */}
-                <div className="col-span-8 grid grid-cols-2 gap-y-6 gap-x-12">
-                  {ABOUT_MENU.map((item) => (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      onClick={closeAll}
-                      className="group flex items-center gap-4 p-3 rounded-xl transition hover:bg-slate-50"
-                    >
-                      <div className="shrink-0">{item.svg}</div>
-                      <span className="text-base font-semibold text-slate-800 group-hover:text-blue-600 transition">
-                        {item.label}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Right Callout Card */}
-                <div className="col-span-4 bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-xl p-6 flex flex-col justify-between relative overflow-hidden">
-                  <div className="relative z-10 space-y-2">
-                    <h4 className="text-xl font-bold leading-tight">Best Place to Work in India</h4>
-                    <p className="text-base text-slate-300 leading-relaxed">
-                      Best Mid-Sized Internet Company
-                    </p>
-                  </div>
-                  <div className="pt-6 relative z-10">
-                    <Link
-                      to="/careers"
-                      onClick={closeAll}
-                      className="inline-flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-none text-sm tracking-wider transition shadow-md group"
-                    >
-                      <span>Careers</span>
-                      <svg
-                        className="h-4 w-4 text-current transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 17L17 7M17 7H7M17 7v10" />
-                      </svg>
-                    </Link>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ================= MEGA MENU 3: RESOURCES ================= */}
+        {/* ================= MEGA MENU 3: RESOURCES (TEMPORARILY COMMENTED OUT) =================
         {activeMenu === "resources" && (
           <div className="hidden lg:block absolute left-0 top-full w-full border-b border-slate-200 bg-white shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="max-w-7xl mx-auto px-8 py-10">
               <div className="grid grid-cols-12 gap-8 items-center">
                 
-                {/* Calculators & Tools Column */}
                 <div className="col-span-4 space-y-3">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 pb-2 border-b border-slate-100">
                     Calculators & Tools
@@ -442,7 +305,6 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                {/* Sectors We Serve Column */}
                 <div className="col-span-4 space-y-3">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 pb-2 border-b border-slate-100">
                     Sectors We Serve
@@ -461,7 +323,6 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                {/* Calculator Visual Card */}
                 <div className="col-span-4 bg-blue-50 rounded-3xl p-6 border border-blue-100 flex flex-col justify-between">
                   <div>
                     <div className="mb-2">
@@ -487,6 +348,7 @@ export default function Navbar() {
             </div>
           </div>
         )}
+        ================================================================================== */}
 
         {/* ================= MOBILE NAVIGATION DRAWER ================= */}
         {mobileOpen && (
@@ -517,29 +379,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile About Us Accordion */}
-            <div className="border border-slate-100 rounded-xl p-2 bg-slate-50/50">
-              <button
-                onClick={() => setMobileSection((v) => (v === "about" ? null : "about"))}
-                className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-bold text-slate-800"
-              >
-                <span>About Us</span>
-                <svg className={`h-4 w-4 transition-transform ${mobileSection === "about" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              {mobileSection === "about" && (
-                <div className="mt-2 space-y-1 pl-2 border-l-2 border-blue-200">
-                  {ABOUT_MENU.map((item) => (
-                    <Link key={item.path} to={item.path} onClick={closeAll} className="block rounded-lg px-3 py-2 text-sm text-slate-600 font-medium">
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Mobile Resources Accordion */}
+            {/* ================= MOBILE RESOURCES ACCORDION (TEMPORARILY COMMENTED OUT) =================
             <div className="border border-slate-100 rounded-xl p-2 bg-slate-50/50">
               <button
                 onClick={() => setMobileSection((v) => (v === "resources" ? null : "resources"))}
@@ -567,9 +407,13 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+            ======================================================================================== */}
 
             {/* Mobile Standalone Links */}
             <div className="space-y-1 pt-2">
+              <Link to="/about/overview" onClick={closeAll} className="block rounded-xl px-4 py-2.5 text-base font-semibold text-slate-800 hover:bg-slate-50">
+                About Us
+              </Link>
               <Link to="/partnerwithus" onClick={closeAll} className="block rounded-xl px-4 py-2.5 text-base font-semibold text-slate-800 hover:bg-slate-50">
                 Partner With Us
               </Link>

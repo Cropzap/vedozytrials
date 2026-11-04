@@ -19,9 +19,11 @@ export default function ContactUs() {
     name: '',
     email: '',
     phone: '',
-    engagement: '',
-    context: ''
+    subject: '',
+    message: ''
   });
+
+  const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwP3JTgDMIto5aqPMtQF3YNuJ47wSivnG36_IQo_dCY8UXwPpyZokIUnC3EOzMYoW3mBw/exec";
 
   const handleInputChange = (e, field) => {
     setFormData(prev => ({ ...prev, [field]: e.target.value }));
@@ -29,32 +31,51 @@ export default function ContactUs() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone || !formData.engagement) {
+    if (!formData.name || !formData.email || !formData.phone || !formData.subject || !formData.message) {
       return;
     }
 
     setFormState('SENDING');
 
+    // 1. Web3Forms Payload
     const submissionBody = new FormData();
     submissionBody.append("access_key", "80a7ed10-ec8b-4ab2-b544-32492a2f3819");
-    submissionBody.append("subject", `New Haptenics Engagement Blueprint from ${formData.name}`);
-    
+    submissionBody.append("subject", `New Inquiry from ${formData.name}: ${formData.subject}`);
     submissionBody.append("name", formData.name);
     submissionBody.append("email", formData.email);
     submissionBody.append("mobile_number", formData.phone);
-    submissionBody.append("area_of_engagement", formData.engagement);
-    submissionBody.append("operational_context", formData.context);
+    submissionBody.append("subject_matter", formData.subject);
+    submissionBody.append("message", formData.message);
+
+    // 2. Google Sheet Payload using URLSearchParams for reliable e.parameter mapping
+    const sheetParams = new URLSearchParams();
+    sheetParams.append("name", formData.name);
+    sheetParams.append("email", formData.email);
+    sheetParams.append("phone", formData.phone);
+    sheetParams.append("subject", formData.subject);
+    sheetParams.append("message", formData.message);
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const web3FormsPromise = fetch("https://api.web3forms.com/submit", {
         method: "POST",
         body: submissionBody
       });
-      
-      const resData = await response.json();
+
+      const googleSheetPromise = fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: sheetParams.toString()
+      });
+
+      const [web3Res] = await Promise.all([web3FormsPromise, googleSheetPromise]);
+      const resData = await web3Res.json();
+
       if (resData.success) {
         setFormState('SUCCESS');
-        setFormData({ name: '', email: '', phone: '', engagement: '', context: '' });
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
       } else {
         setFormState('ERROR');
       }
@@ -66,8 +87,8 @@ export default function ContactUs() {
   return (
     <div className="bg-slate-50/50 min-h-screen text-slate-900 font-sans antialiased relative overflow-hidden">
       <Helmet>
-        <title>Contact Us | Haptenics</title>
-        <meta name="Lets connect and discuss how we can work together." />
+        <title>Contact Us | Hivictus</title>
+        <meta name="description" content="Lets connect and discuss how we can work together." />
       </Helmet>
 
       {/* Background Decorative Mesh Grids */}
@@ -86,7 +107,7 @@ export default function ContactUs() {
             Let's talk
           </div>
           <p className="text-slate-600 font-normal text-base sm:text-lg leading-relaxed max-w-2xl">
-            lets connect and talk how we can work together and be a part of a growing movement for agriculture.
+            Lets connect and talk how we can work together and be a part of a growing movement.
           </p>
         </div>
 
@@ -96,7 +117,7 @@ export default function ContactUs() {
           {/* Contact Details & SLA Info (Left) */}
           <div className="lg:col-span-5 space-y-6">
             
-            {/* Bento Box 1: Location & Channels */}
+            {/* Bento Box 1: Location & Communication Channels */}
             <div className="bg-white border border-slate-200/80 p-6 sm:p-8 rounded-3xl shadow-sm space-y-6">
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                 Meet us
@@ -111,23 +132,46 @@ export default function ContactUs() {
                   <div className="space-y-1">
                     <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Address</span>
                     <p className="text-slate-800 font-medium text-sm sm:text-base leading-snug">
-                      1/6, Velan Nagar, Chennimalai, Erode - 638051
+                      1/6, Velan nagar, Chennimalai to arachalur road, Chennimalai, Erode, Tamil Nadu, India
                     </p>
                   </div>
                 </div>
 
-                {/* Email */}
+                {/* General Inquiries */}
                 <div className="flex items-start gap-4 group">
                   <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
                     <Mail className="w-5 h-5 text-slate-600 group-hover:text-white" />
                   </div>
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Product Inquiries</span>
-                    <a 
-                      href="mailto:sales@haptenics.com" 
-                      className="text-slate-800 font-semibold text-sm sm:text-base hover:text-indigo-600 transition-colors block"
-                    >
-                      sales@haptenics.com
+                  <div className="space-y-0.5">
+                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">General Inquiries</span>
+                    <a href="mailto:info@hivictus.com" className="text-slate-800 font-semibold text-sm hover:text-indigo-600 transition-colors block">
+                      info@hivictus.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* Customer Support */}
+                <div className="flex items-start gap-4 group">
+                  <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
+                    <Mail className="w-5 h-5 text-slate-600 group-hover:text-white" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Customer Support</span>
+                    <a href="mailto:Support@hivictus.com" className="text-slate-800 font-semibold text-sm hover:text-indigo-600 transition-colors block">
+                      Support@hivictus.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* Grievance Desk */}
+                <div className="flex items-start gap-4 group">
+                  <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
+                    <Mail className="w-5 h-5 text-slate-600 group-hover:text-white" />
+                  </div>
+                  <div className="space-y-0.5">
+                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Grievance Desk</span>
+                    <a href="mailto:griverance@hivictus.com" className="text-slate-800 font-semibold text-sm hover:text-indigo-600 transition-colors block">
+                      griverance@hivictus.com
                     </a>
                   </div>
                 </div>
@@ -138,11 +182,8 @@ export default function ContactUs() {
                     <PhoneCall className="w-5 h-5 text-slate-600 group-hover:text-white" />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Phone</span>
-                    <a 
-                      href="mailto:contact@haptenics.com" 
-                      className="text-slate-800 font-semibold text-sm sm:text-base hover:text-indigo-600 transition-colors block"
-                    >
+                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Direct Line</span>
+                    <a href="tel:9952492456" className="text-slate-800 font-semibold text-sm sm:text-base hover:text-indigo-600 transition-colors block">
                       9952492456
                     </a>
                   </div>
@@ -166,12 +207,12 @@ export default function ContactUs() {
               </h4>
               
               <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-                Our team will getback within 24 business hours in standard business days. Sundays and holidays may lead to more time for reply
+                Our team will get back within 24 business hours on standard business days. Sundays and holidays may lead to more time for reply.
               </p>
 
               <div className="pt-2 flex items-center gap-2 text-[11px] text-slate-400 font-medium border-t border-slate-800">
                 <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                Protected by Haptenics privacy standards and non-disclosure protocols.
+                Protected by privacy standards and non-disclosure protocols.
               </div>
             </div>
 
@@ -186,24 +227,24 @@ export default function ContactUs() {
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">Requirement Received</h3>
+                  <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">Message Received</h3>
                   <p className="text-slate-500 font-medium text-sm sm:text-base max-w-md mx-auto leading-relaxed">
-                    Thank you for reaching out to Haptenics. Our technical specialists are reviewing your parameters and will connect with you shortly.
+                    Thank you for reaching out. We have received your inquiry and will connect with you shortly.
                   </p>
                 </div>
                 <button 
                   onClick={() => setFormState('IDLE')}
                   className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 hover:bg-slate-200 px-6 py-3 rounded-xl transition-all"
                 >
-                  Submit Another Inquiry <ArrowRight className="w-4 h-4" />
+                  Send Another Message <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <form className="space-y-6" onSubmit={handleFormSubmit}>
                 
                 <div className="border-b border-slate-100 pb-4 mb-6">
-                  <h3 className="text-lg font-bold text-slate-900">Technical Engagement Form</h3>
-                  <p className="text-slate-500 text-xs">Fill out the details below to initiate direct correspondence with the Haptenics team.</p>
+                  <h3 className="text-lg font-bold text-slate-900">Get in Touch</h3>
+                  <p className="text-slate-500 text-xs">Fill out the form below and our team will get back to you promptly.</p>
                 </div>
 
                 {/* Identity Input Row */}
@@ -224,20 +265,20 @@ export default function ContactUs() {
 
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                      Corporate Email <span className="text-indigo-600">*</span>
+                      Email Address <span className="text-indigo-600">*</span>
                     </label>
                     <input 
                       type="email" 
                       value={formData.email}
                       onChange={(e) => handleInputChange(e, 'email')}
                       className="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent font-medium text-sm text-slate-900 transition-all outline-none" 
-                      placeholder="name@company.com"
+                      placeholder="name@example.com"
                       required
                     />
                   </div>
                 </div>
 
-                {/* Mobile & Engagement Row */}
+                {/* Mobile & Subject Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
@@ -255,30 +296,31 @@ export default function ContactUs() {
 
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                      Area of Engagement <span className="text-indigo-600">*</span>
+                      Subject <span className="text-indigo-600">*</span>
                     </label>
                     <input 
                       type="text" 
-                      value={formData.engagement}
-                      onChange={(e) => handleInputChange(e, 'engagement')}
+                      value={formData.subject}
+                      onChange={(e) => handleInputChange(e, 'subject')}
                       className="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent font-medium text-sm text-slate-900 transition-all outline-none" 
-                      placeholder="e.g. Software Development, Systems Integration"
+                      placeholder="e.g. General Inquiry, Partnership"
                       required
                     />
                   </div>
                 </div>
 
-                {/* Textarea Context */}
+                {/* Textarea Message */}
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    Operational Context / Project Scope
+                    Message <span className="text-indigo-600">*</span>
                   </label>
                   <textarea 
                     rows="4" 
-                    value={formData.context}
-                    onChange={(e) => handleInputChange(e, 'context')}
+                    value={formData.message}
+                    onChange={(e) => handleInputChange(e, 'message')}
                     className="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent font-medium text-sm text-slate-900 transition-all outline-none resize-none" 
-                    placeholder="Briefly describe your project requirements, architecture goals, or engineering timeline..."
+                    placeholder="Type your message here..."
+                    required
                   />
                 </div>
 
@@ -302,10 +344,10 @@ export default function ContactUs() {
                     }`}
                   >
                     {formStatus === 'SENDING' ? (
-                      <>Routing Request...</>
+                      <>Sending Message...</>
                     ) : (
                       <>
-                        <span>Submit Inquiry</span>
+                        <span>Send Message</span>
                         <Send className="w-4 h-4" />
                       </>
                     )}

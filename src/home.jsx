@@ -110,8 +110,8 @@ export default function Home() {
             {/* Public Notice / Subtext block */}
             <div className="mb-8 text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
               <span className="text-amber-400 font-semibold">Public Notice:</span> Vedozy will not charge any fee through UPI and all the transactions will take care only in the approved current account of vedozy or its parent entity Hivictus Private Limited. Do not share OTPs or sensitive credentials with unverified contacts. For official support or inquiries, email us at{" "}
-              <a href="mailto:help@vedozy.com" className="text-blue-400 underline hover:text-blue-300">
-                help@vedozy.com
+              <a href="mailto:info@hivictus.com" className="text-blue-400 underline hover:text-blue-300">
+                info@hivictus.com
               </a>
             </div>
 

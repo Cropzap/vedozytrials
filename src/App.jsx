@@ -20,6 +20,7 @@ import SupplychainFinancing from './loansfolio/SupplychainFinancing';
 
 // 4. Auxiliary Pages
 import AboutUs from './pages/aboutus';
+import Overview from './pages/about/Overview'; // Added Overview page import
 import ServiceDetails from './pages/servicedetails';
 import ContactUs from './pages/contactus';
 import Careers from './pages/careers';
@@ -104,7 +105,10 @@ function App() {
           <Route path="/loans/machinery-loan" element={<MachineryLoan />} />
           <Route path="/loans/supplychain-financing" element={<SupplychainFinancing />} />
 
+          {/* About Routes */}
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/about/overview" element={<Overview />} />
+
           <Route path="/services/:serviceSlug" element={<ServiceDetails />} />
           
           {/* Enhanced Story Route */}
