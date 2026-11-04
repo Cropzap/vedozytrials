@@ -201,7 +201,7 @@ export default function Home() {
                   onClick={() => navigate("/register")}
                   className="text-blue-600 text-sm font-semibold flex items-center gap-2 hover:text-blue-700 cursor-pointer"
                 >
-                  Apply Now <ArrowRight size={16} />
+                  Join in Wishlist<ArrowRight size={16} />
                 </button>
               </div>
             ))}
@@ -288,7 +288,7 @@ export default function Home() {
               onClick={() => navigate("/register")}
               className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-full inline-flex items-center gap-2 transition-all cursor-pointer shadow-lg shadow-blue-600/30"
             >
-              Apply Now <ArrowRight size={18} />
+              Join in Wishlist <ArrowRight size={18} />
             </button>
           </div>
         </div>

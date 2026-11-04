@@ -5,6 +5,18 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Loader2, Eye, EyeOff, ShieldCheck, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
+// ✅ Your deployed Google Apps Script Web App URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-Wu_9G-m2nN-IN9iV-ZFAWg1B_DiPfqdSwMrhx87b2A0zwkMgsb1It2FEOlLv_bqmFw/exec";
+
+// Natively hash plain-text password to SHA-256 hex string using Web Crypto API
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 const Input = ({ icon: Icon, ...props }) => (
   <div className="relative">
     <Icon
@@ -35,18 +47,46 @@ export default function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ NO BACKEND - DIRECT LOGIN
-  const handleLogin = (e) => {
+  // ✅ AUTHENTICATE WITH GOOGLE SHEETS
+  const handleLogin = async (e) => {
     e.preventDefault();
-
     setLoading(true);
     setError("");
 
-    setTimeout(() => {
-      localStorage.setItem("token", "dummy-token");
-      navigate("/dashboard");
+    try {
+      // 1. Fetch user record from Google Sheet via Apps Script GET endpoint
+      const response = await fetch(`${GOOGLE_SCRIPT_URL}?email=${encodeURIComponent(form.email)}`);
+      const data = await response.json();
+
+      if (data.result === "not_found") {
+        setLoading(false);
+        setError("No account found with this email address.");
+        return;
+      }
+
+      if (data.result === "error") {
+        throw new Error(data.error || "Authentication failed.");
+      }
+
+      // 2. Hash the input password to compare with the stored SHA-256 hash
+      const inputPasswordHash = await hashPassword(form.password);
+
+      if (inputPasswordHash === data.user.passwordHash) {
+        // 3. Save user info & session token on successful match
+        localStorage.setItem("token", "authenticated-session-token");
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        setLoading(false);
+        navigate("/dashboard");
+      } else {
+        setLoading(false);
+        setError("Invalid email or password. Please try again.");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
       setLoading(false);
-    }, 600);
+      setError("Unable to connect to login server. Please check your network connection.");
+    }
   };
 
   return (
@@ -140,7 +180,7 @@ export default function Login() {
             </div>
           )}
 
-          {/* Professional, Elegant & Modern Login Button */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -149,7 +189,7 @@ export default function Login() {
             {loading ? (
               <>
                 <Loader2 size={18} className="animate-spin text-blue-300" />
-                <span>Logging in...</span>
+                <span>Verifying Credentials...</span>
               </>
             ) : (
               <>

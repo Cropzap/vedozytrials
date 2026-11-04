@@ -21,6 +21,19 @@ import {
   FileCheck 
 } from "lucide-react";
 
+// ✅ Your deployed Google Apps Script Web App URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYQO85koQpOt5fhSRULtA3Vv_CsCJgk_Xeb02BNiKweCqipA3L-ORoF7Cya7Fl63IV/exec";
+
+// Helper function to read file as Base64 string for Google Sheets / Drive sync
+const convertFileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 export default function PartnerWithUs() {
   const navigate = useNavigate();
 
@@ -118,7 +131,7 @@ export default function PartnerWithUs() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -132,18 +145,68 @@ export default function PartnerWithUs() {
       return;
     }
 
+    if (!form.documentFile) {
+      setError("Please upload a verification document.");
+      return;
+    }
+
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true); // ✅ Hides form completely
+    try {
+      // 1. Process File to Base64
+      let fileData = null;
+      let fileName = "";
+      let fileMimeType = "";
 
-      // ✅ Automatically scrolls user view smoothly back up to the form container section
-      const formSection = document.getElementById("registration-form");
-      if (formSection) {
-        formSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (form.documentFile) {
+        fileData = await convertFileToBase64(form.documentFile);
+        fileName = form.documentFile.name;
+        fileMimeType = form.documentFile.type;
       }
-    }, 800);
+
+      // 2. Build JSON Payload matching Apps Script expectations
+      const payload = {
+        institutionName: form.institutionName,
+        nbfcRegistrationNo: form.nbfcRegistrationNo,
+        gstNo: form.gstNo,
+        contactPerson: form.contactPerson,
+        email: form.email,
+        phone: form.phone,
+        creditRange: form.creditRange,
+        loanCategories: form.loanCategories,
+        fileData: fileData,
+        fileName: fileName,
+        fileMimeType: fileMimeType,
+      };
+
+      // 3. Post to Google Apps Script Endpoint
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8", // text/plain prevents CORS preflight issues
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (result.result === "success") {
+        setLoading(false);
+        setSubmitted(true); // Hides form and displays success view
+
+        // Smoothly scroll back up to the form section
+        const formSection = document.getElementById("registration-form");
+        if (formSection) {
+          formSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } else {
+        throw new Error(result.error || "Failed to submit registration.");
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      setLoading(false);
+      setError("Failed to submit form data. Please try again or check your network connection.");
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -210,7 +273,6 @@ export default function PartnerWithUs() {
                           1. HERO SECTION
       ================================================================ */}
       <section className="relative min-h-[500px] sm:min-h-[560px] flex items-center bg-slate-950 overflow-hidden">
-        
         {heroImages.map((img, idx) => (
           <div
             key={idx}
@@ -261,7 +323,6 @@ export default function PartnerWithUs() {
       ================================================================ */}
       <section id="about-section" className="py-24 px-6 sm:px-12 lg:px-20 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto">
-          
           <div className="mb-12">
             <span className="text-blue-600 font-bold text-xs uppercase tracking-widest bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-100">
               About The Alliance
@@ -272,7 +333,6 @@ export default function PartnerWithUs() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
             <div className="lg:col-span-6">
               <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950 p-8 sm:p-10 rounded-3xl text-white shadow-xl relative overflow-hidden space-y-6">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-2xl pointer-events-none" />
@@ -337,19 +397,16 @@ export default function PartnerWithUs() {
                   </div>
                 </div>
               </div>
-
             </div>
-
           </div>
         </div>
       </section>
 
       {/* ================================================================
-              3. FEATURES SECTION
+                          3. FEATURES SECTION
       ================================================================ */}
       <section className="py-24 px-6 sm:px-12 lg:px-20 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto">
-          
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <span className="text-blue-600 font-bold text-xs uppercase tracking-widest bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-100">
               Institutional Capabilities
@@ -388,7 +445,6 @@ export default function PartnerWithUs() {
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
@@ -397,7 +453,6 @@ export default function PartnerWithUs() {
       ================================================================ */}
       <section className="py-24 px-6 sm:px-12 lg:px-20 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto">
-          
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <span className="text-blue-600 font-bold text-xs uppercase tracking-widest bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-100">
               The Partner Advantage
@@ -428,7 +483,6 @@ export default function PartnerWithUs() {
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
@@ -437,7 +491,6 @@ export default function PartnerWithUs() {
       ================================================================ */}
       <section id="registration-form" className="py-24 px-6 sm:px-12 lg:px-20 bg-slate-50">
         <div className="max-w-4xl mx-auto">
-          
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
             <span className="text-blue-600 font-bold text-xs uppercase tracking-widest bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-100">
               Institutional Onboarding
@@ -451,12 +504,8 @@ export default function PartnerWithUs() {
           </div>
 
           <div className="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-12 shadow-xl shadow-slate-200/60">
-            
-            {/* ✅ SUCCESS STATE (FORM IS HIDDEN, AUTO-SCROLLED, PLAIN TICK, CUSTOM MESSAGE) */}
             {submitted ? (
               <div className="py-16 text-center space-y-8 animate-fadeIn max-w-2xl mx-auto">
-                
-                {/* Plain Outline Round Tick Icon (No fill) */}
                 <div className="w-24 h-24 mx-auto flex items-center justify-center text-emerald-600">
                   <CheckCircle size={80} strokeWidth={1.75} />
                 </div>
@@ -470,10 +519,9 @@ export default function PartnerWithUs() {
                   </p>
                 </div>
 
-                {/* Supporting Content Box */}
                 <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-6 sm:p-8 text-center">
                   <p className="text-base sm:text-lg font-semibold text-slate-800 leading-relaxed">
-                    Our Representative will getback within 24 hours for further onboarding and integration process.
+                    Our Representative will get back within 24 hours for further onboarding and integration process.
                   </p>
                 </div>
 
@@ -485,12 +533,9 @@ export default function PartnerWithUs() {
                     Return to Home
                   </button>
                 </div>
-
               </div>
             ) : (
-              /* ✅ FORM DISPLAY STATE */
               <form onSubmit={handleSubmit} className="space-y-8">
-                
                 {error && (
                   <div className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-semibold">
                     {error}
@@ -498,8 +543,6 @@ export default function PartnerWithUs() {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  
-                  {/* Institution Name */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Institution / NBFC Name *</label>
                     <div className="relative">
@@ -516,7 +559,6 @@ export default function PartnerWithUs() {
                     </div>
                   </div>
 
-                  {/* RBI Registration Number */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">RBI License / Registration No. *</label>
                     <div className="relative">
@@ -533,7 +575,6 @@ export default function PartnerWithUs() {
                     </div>
                   </div>
 
-                  {/* GST Registration Number */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">GST Registration Number *</label>
                     <div className="relative">
@@ -550,7 +591,6 @@ export default function PartnerWithUs() {
                     </div>
                   </div>
 
-                  {/* Contact Executive */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Primary Executive Contact *</label>
                     <div className="relative">
@@ -567,7 +607,6 @@ export default function PartnerWithUs() {
                     </div>
                   </div>
 
-                  {/* Corporate Email */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Corporate Email Address *</label>
                     <div className="relative">
@@ -584,7 +623,6 @@ export default function PartnerWithUs() {
                     </div>
                   </div>
 
-                  {/* Direct Phone */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Direct Phone Number *</label>
                     <div className="relative">
@@ -600,10 +638,8 @@ export default function PartnerWithUs() {
                       />
                     </div>
                   </div>
-
                 </div>
 
-                {/* Monthly Credit Allocation Capacity */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Monthly Disbursement Capacity *</label>
                   <select
@@ -618,7 +654,6 @@ export default function PartnerWithUs() {
                   </select>
                 </div>
 
-                {/* Target Loan Categories Selection */}
                 <div className="space-y-3 pt-2">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Target Loan Categories of Interest *</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -636,7 +671,6 @@ export default function PartnerWithUs() {
                   </div>
                 </div>
 
-                {/* Institutional Verification Documents File Upload */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">Verification Documents (RBI License / Certificate / PAN) *</label>
                   <div className="border-2 border-dashed border-slate-200 rounded-2xl p-6 bg-slate-50 hover:bg-slate-100/60 transition-colors text-center cursor-pointer relative">
@@ -658,60 +692,46 @@ export default function PartnerWithUs() {
                   </div>
                 </div>
 
-                {/* Compliance Box */}
                 <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-100 flex items-start gap-3">
                   <ShieldCheck size={22} className="text-blue-600 shrink-0 mt-0.5" />
                   <div className="space-y-1">
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide">RBI Digital Lending Regulatory Acknowledgment</h4>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      By submitting, your institution confirms it holds a valid RBI license, enforces zero upfront fees for borrowers, and adheres to direct bank-to-bank disbursals under Vedozy partnership guidelines.
-                    </p>
+                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">RBI Digital Lending Compliance</h4>
+                    <p className="text-xs text-slate-500">By submitting, you confirm that your institution operates under valid RBI certification and agrees to comply with standard LSP co-lending workflows and data protection mandates.</p>
                   </div>
                 </div>
 
-                {/* Agreement Checkbox */}
-                <div className="flex items-start gap-3">
+                <label className="flex items-center gap-3 cursor-pointer select-none pt-2">
                   <input 
                     type="checkbox"
                     name="agreeCompliance"
-                    id="agreeCompliance"
                     checked={form.agreeCompliance}
                     onChange={handleChange}
-                    className="mt-0.5 w-4 h-4 text-blue-600 border-slate-300 rounded cursor-pointer shrink-0"
+                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
                   />
-                  <label htmlFor="agreeCompliance" className="text-xs text-slate-700 font-semibold cursor-pointer select-none leading-relaxed">
-                    We confirm our NBFC/Banking institution complies with RBI Digital Lending Frameworks and authorizes Vedozy to review our onboarding details.
-                  </label>
-                </div>
+                  <span className="text-xs font-bold text-slate-800">I confirm compliance with RBI guidelines & LSP frameworks *</span>
+                </label>
 
-                {/* Submit Button */}
-                <div className="pt-2">
+                <div className="pt-4">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-slate-900 hover:bg-blue-600 text-white font-bold py-4 rounded-2xl text-base flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer shadow-lg shadow-slate-900/10 hover:shadow-xl hover:shadow-blue-600/20 active:scale-[0.99] disabled:opacity-70"
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 text-base cursor-pointer disabled:opacity-50"
                   >
                     {loading ? (
                       <>
-                        <Loader2 size={20} className="animate-spin text-blue-300" />
-                        <span>Submitting Application...</span>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Submitting Credentials...
                       </>
                     ) : (
-                      <>
-                        <span>Submit</span>
-                        <ArrowRight size={18} />
-                      </>
+                      "Submit Institutional Application"
                     )}
                   </button>
                 </div>
-
               </form>
             )}
           </div>
-
         </div>
       </section>
-
     </div>
   );
 }

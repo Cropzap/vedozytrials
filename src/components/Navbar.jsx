@@ -177,7 +177,7 @@ export default function Navbar() {
             </span>
           </div>
 
-          {/* Right Links */}
+          {/* Right Links *
           <div className="flex items-center gap-3 sm:gap-6">
             <Link to="/careers" className="text-xs sm:text-sm text-black hover:text-blue-600 transition">
               Careers
@@ -190,11 +190,11 @@ export default function Navbar() {
             <Link to="/login" className="text-xs sm:text-sm text-black hover:text-blue-600 transition flex items-center gap-1 font-semibold">
               Login
             </Link>
-          </div>
+          </div> ====== */}
         </div>
       </div>
 
-      {/* ================= MAIN NAVIGATION HEADER ================= */}
+      {/*================= MAIN NAVIGATION HEADER ================= */}
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white shadow-sm font-sans text-slate-800">
         <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           
@@ -293,7 +293,7 @@ export default function Navbar() {
               onClick={closeAll}
               className="inline-flex items-center justify-center bg-white text-black font-semibold text-sm uppercase tracking-wider px-6 py-3 rounded-none border border-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors duration-150"
             >
-              Apply Now
+              Join In Wishlist
             </Link>
 
             {/* Mobile Menu Trigger */}

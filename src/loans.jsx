@@ -79,32 +79,7 @@ export default function Loans() {
     { title: "Dedicated Support Advisors", desc: "Expert guidance from application to disbursal and throughout your loan lifecycle." }
   ];
 
-  const lendingPartners = [
-    {
-      name: "Aditya Birla Capital",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Aditya_Birla_Group_Logo.svg/1200px-Aditya_Birla_Group_Logo.svg.png"
-    },
-    {
-      name: "Tata Capital",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Tata_logo.svg"
-    },
-    {
-      name: "L&T Finance",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/e/e5/L%26T.svg"
-    },
-    {
-      name: "InCred Finance",
-      logo: "https://images.seeklogo.com/logo-png/43/2/incred-logo-png_seeklogo-434032.png"
-    },
-    {
-      name: "Protium",
-      logo: "https://images.seeklogo.com/logo-png/50/2/protium-logo-png_seeklogo-509204.png"
-    },
-    {
-      name: "Vivriti Capital",
-      logo: "https://images.seeklogo.com/logo-png/44/2/vivriti-capital-logo-png_seeklogo-442805.png"
-    }
-  ];
+  
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans">
@@ -247,35 +222,7 @@ export default function Loans() {
         </div>
       </section>
 
-      {/* Our Lending Partners */}
-      <section className="py-20 px-6 sm:px-12 lg:px-20 bg-white border-t border-slate-200 text-center">
-        <div className="max-w-7xl mx-auto">
-          <span className="text-blue-600 font-bold text-xs uppercase tracking-widest bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-100">
-            Trusted Ecosystem
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-4 mb-3">
-            Our Lending Partners
-          </h2>
-          <p className="text-slate-600 text-base max-w-xl mx-auto mb-12">
-            We collaborate with leading RBI-regulated NBFCs and banking institutions to bring you competitive rates and fast approvals.
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-            {lendingPartners.map((partner, idx) => (
-              <div 
-                key={idx} 
-                className="bg-slate-50 border border-slate-200/80 p-6 rounded-2xl shadow-sm hover:shadow-lg hover:border-blue-500/80 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center h-28 group"
-              >
-                <img 
-                  src={partner.logo} 
-                  alt={partner.name} 
-                  className="max-h-12 max-w-[120px] object-contain group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+     
 
       {/* Final CTA: Free Consultation */}
       <section className="py-20 px-6 sm:px-12 lg:px-20 bg-slate-50 border-t border-slate-200 text-center">
