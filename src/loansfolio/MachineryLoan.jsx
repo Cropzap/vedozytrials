@@ -58,7 +58,7 @@ export default function MachineryLoan() {
             </h1>
 
             <p className="text-slate-300 text-base leading-relaxed">
-              Upgrade your plant capacity, purchase heavy industrial tools, or acquire automated manufacturing lines with specialized equipment credit up to ₹15 Crore.
+              Upgrade your plant capacity, purchase heavy industrial tools, or acquire automated manufacturing lines with specialized equipment? Get credit up to ₹15 Crore.
             </p>
           </div>
 

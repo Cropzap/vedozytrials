@@ -352,7 +352,7 @@ export default function StartupLoan() {
             Accelerate Your Startup's Growth Runway
           </h2>
           <p className="text-violet-100 text-base max-w-xl mx-auto leading-relaxed">
-            Apply online today and get connected with our specialized institutional lending pipeline.
+            Apply online today and get connected with our specialized institutional lenders.
           </p>
 
           <div className="pt-2">

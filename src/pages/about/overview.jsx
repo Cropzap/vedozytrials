@@ -227,7 +227,7 @@ export default function Overview() {
             <span className="text-xs font-bold uppercase tracking-widest text-blue-600">The Vedozy Advantage</span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900">Built for Operational Excellence</h2>
             <p className="text-slate-600 text-base sm:text-lg">
-              Engineered from the ground up to serve both ambitious enterprise borrowers and regulated financial institutions.
+              Designed from the ground up to serve both ambitious enterprise borrowers and regulated financial institutions.
             </p>
           </div>
 

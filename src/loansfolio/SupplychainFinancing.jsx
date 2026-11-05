@@ -350,7 +350,7 @@ export default function SupplychainFinancing() {
       <section className="py-20 px-6 bg-gradient-to-r from-cyan-700 to-blue-800 text-white text-center relative overflow-hidden">
         <div className="max-w-3xl mx-auto space-y-6 relative z-10">
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Accelerate Your Supply Chain Cash Flow Today
+            Accelerate Your Supply Chain Cash Flow Today with Vedozy
           </h2>
           <p className="text-cyan-100 text-base max-w-xl mx-auto leading-relaxed">
             Eliminate working capital bottlenecks and turn unpaid vendor invoices into instant operating cash.

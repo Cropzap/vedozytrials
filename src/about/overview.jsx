@@ -133,7 +133,7 @@ export default function Overview() {
         <div className="bg-blue-600 rounded-3xl p-10 sm:p-14 text-white shadow-xl space-y-6">
           <h2 className="text-3xl sm:text-4xl font-extrabold">Ready to Accelerate Your Business Growth?</h2>
           <p className="text-lg text-blue-100 max-w-2xl mx-auto leading-relaxed">
-            Explore customized financing options engineered for your business model or join our platform early.
+            Explore customized financing options tailored for your business model or join our platform early.
           </p>
           <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
             <Link

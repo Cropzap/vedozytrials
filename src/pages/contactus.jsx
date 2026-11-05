@@ -347,7 +347,7 @@ export default function ContactUs() {
                       <>Sending Message...</>
                     ) : (
                       <>
-                        <span>Send Message</span>
+                        <span>Submit</span>
                         <Send className="w-4 h-4" />
                       </>
                     )}

@@ -86,7 +86,7 @@ export default function MSMEBusinessLoan() {
           <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">Empowering Enterprises</span>
           <h2 className="text-3xl font-extrabold text-slate-900">What is an MSME Business Loan?</h2>
           <p className="text-slate-500 text-sm">
-            Designed specifically for Micro, Small, and Medium Enterprises to maintain steady cash flows and scale operations.
+            Designed specifically for Micro, Small, and Medium Enterprises to maintain steady cash flows and scale operations effortlessly.
           </p>
         </div>
 

@@ -352,7 +352,7 @@ export default function WorkingCapitalLoan() {
             Optimize Your Working Capital Today
           </h2>
           <p className="text-emerald-100 text-base max-w-xl mx-auto leading-relaxed">
-            Never let cash flow bottlenecks delay your business growth. Get quick approval on customized credit lines.
+            Never let cash flow effect your business growth. Get quick approval on customized credit lines.
           </p>
 
           <div className="pt-2">
