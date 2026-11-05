@@ -20,7 +20,7 @@ import SupplychainFinancing from './loansfolio/SupplychainFinancing';
 
 // 4. Auxiliary Pages
 import AboutUs from './pages/aboutus';
-import Overview from './pages/about/Overview'; // Added Overview page import
+import Overview from './pages/about/overview'; // Added Overview page import
 import ServiceDetails from './pages/servicedetails';
 import ContactUs from './pages/contactus';
 import Careers from './pages/careers';
